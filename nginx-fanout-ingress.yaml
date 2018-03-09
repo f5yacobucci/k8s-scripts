@@ -1,0 +1,28 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: nginx-%NAME
+  annotations:
+     'virtual-server.f5.com/ip': '%IP'
+     'virtual-server.f5.com/health': |
+      [
+        {
+          "path":     "%HOST/",
+          "send":     "HTTP GET /",
+          "interval": 5,
+          "timeout":  10
+        }
+      ]
+spec:
+  tls:
+  - hosts:
+    - %HOST
+    secretName: %HOST
+  rules:
+  - host: %HOST
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: nginx-%NAME
+          servicePort: 80

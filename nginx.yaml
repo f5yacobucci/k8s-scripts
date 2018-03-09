@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nginx-%NAME
+  labels:
+    run: nginx-%NAME
+  namespace: default
+spec:
+  replicas: %NUM
+  selector:
+    matchLabels:
+      run: nginx-%NAME
+  template:
+    metadata:
+      labels:
+         run: nginx-%NAME
+    spec:
+      containers:
+      - image: nginx
+        imagePullPolicy: Always
+        name: nginx
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
