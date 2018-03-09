@@ -6,31 +6,31 @@ set -e
 IP=$1
 
 create_ingress() {
-    sed -e "s/%NAME/$1/g" -e "s/%HOST/$2/g" -e "s/%IP/$3/g" nginx-fanout-ingress.yaml | kubectl create -f -
+    sed -e "s/%NAME/$1/g" -e "s/%HOST/$2/g" -e "s/%IP/$3/g" test-fanout-ingress.yaml | kubectl create -f -
 }
 
 create_deployment() {
-    sed -e "s/%NAME/$1/g" -e "s/%NUM/$2/g" nginx.yaml | kubectl create -f -
+    sed -e "s/%NAME/$1/g" -e "s/%NUM/$2/g" test.yaml | kubectl create -f -
 }
 
 create_service() {
-    sed -e "s/%NAME/$1/g" nginx-svc.yaml | kubectl create -f -
+    sed -e "s/%NAME/$1/g" test-svc.yaml | kubectl create -f -
 }
 
 delete_ingress() {
-    sed -e "s/%NAME/$1/g" -e "s/%HOST/$2/g" nginx-single-ingress.yaml | kubectl delete -f -
+    sed -e "s/%NAME/$1/g" -e "s/%HOST/$2/g" test-single-ingress.yaml | kubectl delete -f -
 }
 
 delete_deployment() {
-    sed -e "s/%NAME/$1/g" -e "s/%NUM/$2/g" nginx.yaml | kubectl delete -f -
+    sed -e "s/%NAME/$1/g" -e "s/%NUM/$2/g" test.yaml | kubectl delete -f -
 }
 
 delete_service() {
-    sed -e "s/%NAME/$1/g" nginx-svc.yaml | kubectl delete -f -
+    sed -e "s/%NAME/$1/g" test-svc.yaml | kubectl delete -f -
 }
 
 scale_deployment() {
-    sed -e "s/%NAME/$1/g" -e "s/%NUM/$2/g" nginx.yaml | kubectl apply -f -
+    sed -e "s/%NAME/$1/g" -e "s/%NUM/$2/g" test.yaml | kubectl apply -f -
 }
 
 create_secrets() {

@@ -2,13 +2,13 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    run: nginx-%NAME
-  name: nginx-%NAME
+    run: test-%NAME
+  name: test-%NAME
   namespace: default
 spec:
   type: NodePort
   selector:
-    run: nginx-%NAME
+    run: test-%NAME
   ports:
   - port: 80
     protocol: TCP
