@@ -3,7 +3,19 @@
 #set -x
 set -e
 
-IP=$1
+INTERACTIVE=0
+IP=""
+while getopts "ia:" opt; do
+    case "$opt" in
+    i) INTERACTIVE=1
+       ;;
+    a) IP=$OPTARG
+       ;;
+    *) echo "usage: -i -a [ADDRESS]"
+       exit 0
+       ;;
+    esac
+done
 
 create_ingress() {
     sed -e "s/%NAME/$1/g" -e "s/%HOST/$2/g" -e "s/%IP/$3/g" test-fanout-ingress.yaml | kubectl create -f -
@@ -18,7 +30,7 @@ create_service() {
 }
 
 delete_ingress() {
-    sed -e "s/%NAME/$1/g" -e "s/%HOST/$2/g" test-single-ingress.yaml | kubectl delete -f -
+    sed -e "s/%NAME/$1/g" -e "s/%HOST/$2/g" test-fanout-ingress.yaml | kubectl delete -f -
 }
 
 delete_deployment() {
@@ -56,37 +68,79 @@ while true
 do
     for i in $INDEXES
     do
-        create_secrets ${HOSTS[$i]}
         create_deployment $i 10
+    done
+    if [ $INTERACTIVE == 1 ]
+    then
+        echo Continue
+        read y
+    fi
+
+    for i in $INDEXES
+    do
         create_service $i
+    done
+    if [ $INTERACTIVE == 1 ]
+    then
+        echo Continue
+        read y
+    fi
+
+    for i in $INDEXES
+    do
         create_ingress $i ${HOSTS[$i]} $IP
     done
-
-    echo "waiting for pods"
-    sleep 60
+    if [ $INTERACTIVE == 1 ]
+    then
+        echo Continue
+        read y
+    else
+        echo "waiting for pods"
+        sleep 60
+    fi
 
     for i in $INDEXES
     do
         scale_deployment $i 1
     done
-    sleep 5
+
+    if [ $INTERACTIVE == 1 ]
+    then
+        echo Continue
+        read y
+    else
+        echo "waiting for scaling"
+        sleep 30
+    fi
+
     for i in $INDEXES
     do
         scale_deployment $i 5
     done
 
-    echo "waiting for scale completion"
-    sleep 30
+    if [ $INTERACTIVE == 1 ]
+    then
+        echo Continue
+        read y
+    else
+        echo "waiting for scale completion"
+        sleep 30
+    fi
 
     for i in $INDEXES
     do
         delete_deployment $i 5
         delete_service $i
         delete_ingress $i ${HOSTS[$i]}
-        delete_secrets ${HOSTS[$i]}
     done
 
     echo "cleaned"
-    echo "Ctlr-C now to stop in clean state"
-    sleep 10
+    if [ $INTERACTIVE == 1 ]
+    then
+        echo Continue
+        read y
+    else
+        echo "Ctlr-C now to stop in clean state"
+        sleep 15
+    fi
 done

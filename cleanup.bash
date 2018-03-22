@@ -9,7 +9,7 @@ do
   kubectl delete ingress test-$i
  done
 
-for i in bar.example.com baz.example.com corge.example.com qux.example.com foo.example.com thud.example.com
-do
-  kubectl delete secret $i
-done
+#for i in bar.example.com baz.example.com corge.example.com qux.example.com foo.example.com thud.example.com
+#do
+#  kubectl delete secret $i
+#done

@@ -14,10 +14,6 @@ metadata:
         }
       ]
 spec:
-  tls:
-  - hosts:
-    - %HOST
-    secretName: %HOST
   rules:
   - host: %HOST
     http:
